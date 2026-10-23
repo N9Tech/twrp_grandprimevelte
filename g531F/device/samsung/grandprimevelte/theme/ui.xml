@@ -1,0 +1,1190 @@
+/**
+ * Source intégrale du fichier ui.xml — thème « Fox Ash » pour TWRP 3.2.0_3.
+ * Chaîne unique : c'est exactement ce que recopie le bouton « Copier ».
+ * Le jeton d'accent (#FF7A18) est remplacé à la volée quand l'utilisateur
+ * choisit une autre couleur dans le sélecteur de palette.
+ */
+export const THEME_NAME = "Fox Ash";
+
+export const TWUI_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============================================================================
+  ui.xml — « FOX ASH » · thème type OrangeFox pour TWRP 3.2.0_3
+  ============================================================================
+  Ecran      : 540 x 960 (TW_THEME := portrait_mdpi, densite mdpi 160 dpi)
+               -> 1 dp = 1 px : rayon 16 dp = 16 px, aucun facteur d'echelle
+  Version    : 3 (TWRP 3.1 -> 3.2 ; TWRP refuse tout thème dont
+               <themeversion> ne correspond pas a TW_THEME_VERSION et
+               recharger alors le thème stock)
+  Charte     : noir pur #000000, anthracite #0E1013 / #171A1E,
+               filets #22262C, accent signal #FF7A18
+  Boutons    : angles 16 px (16 dp) — portés par les PNG de images/,
+               TWRP 3.2 ne sachant pas tracer d'angles arrondis en dur
+  Console    : police mono fixe, fond noir, deux filets, journal sideload
+  Placement  : 0=TOP_LEFT 1=TOP_RIGHT 2=BOTTOM_LEFT 3=BOTTOM_RIGHT
+               4=CENTER 5=CENTER_X_ONLY 6=TEXT_ONLY_RIGHT
+  ============================================================================
+  Aucun <include> : ce fichier est autonome (aucun portrait.xml requis).
+  ============================================================================
+-->
+<recovery>
+
+  <!-- ======================== 1. IDENTITE DU THEME ======================== -->
+  <details>
+    <resolution width="540" height="960"/>
+    <author>Fox Ash</author>
+    <title>Fox Ash</title>
+    <description>Noir pur, anthracite, boutons 16 dp, console sideload épurée</description>
+    <preview>preview.png</preview>
+    <themeversion>3</themeversion>
+  </details>
+
+  <!-- ============================ 2. RESSOURCES =========================== -->
+  <!-- Polices livrees avec TWRP (twres/fonts) : aucune police a embarquer.   -->
+  <!-- Images : obligatoirement presentes dans images/ du ui.zip              -->
+  <resources>
+    <font name="font_l" filename="RobotoCondensed-Regular.ttf" size="27"/>
+    <font name="font_m" filename="RobotoCondensed-Regular.ttf" size="20"/>
+    <font name="font_s" filename="RobotoCondensed-Regular.ttf" size="16"/>
+    <font name="fixed" filename="DroidSansMono.ttf" size="14"/>
+
+    <image name="btn_half" filename="btn_half"/>
+    <image name="btn_half_primary" filename="btn_half_primary"/>
+    <image name="btn_half_ghost" filename="btn_half_ghost"/>
+    <image name="btn_full" filename="btn_full"/>
+    <image name="btn_full_primary" filename="btn_full_primary"/>
+    <image name="btn_full_ghost" filename="btn_full_ghost"/>
+    <image name="progress_empty" filename="progress_empty"/>
+    <image name="progress_full" filename="progress_fill"/>
+    <image name="checkbox_false" filename="checkbox_false" retainaspect="1"/>
+    <image name="checkbox_true" filename="checkbox_true" retainaspect="1"/>
+    <image name="folder" filename="folder" retainaspect="1"/>
+    <image name="file" filename="file" retainaspect="1"/>
+  </resources>
+
+  <!-- ========================= 3. VARIABLES / JETONS ====================== -->
+  <variables>
+
+    <!-- palette : changez accent_color (et progress_fill) pour repeindre tout -->
+    <variable name="background_color" value="#000000"/>
+    <variable name="header_color" value="#0E1013"/>
+    <variable name="card_color" value="#171A1E"/>
+    <variable name="line_color" value="#22262C"/>
+    <variable name="text_color" value="#E6E8EB"/>
+    <variable name="text_dim_color" value="#8C939B"/>
+    <variable name="console_text_color" value="#A8B0B9"/>
+    <variable name="accent_color" value="#FF7A18"/>
+    <variable name="accent_soft_color" value="#FFA75C"/>
+    <variable name="button_text_color" value="#E6E8EB"/>
+    <variable name="button_primary_text_color" value="#0B0C0E"/>
+    <variable name="highlight_color" value="#23272D"/>
+    <variable name="text_fail_color" value="#FF6B4A"/>
+    <variable name="transparent" value="#00000000"/>
+    <variable name="semi_transparent" value="#000000CC"/>
+
+    <!-- couleurs des listes / scrollbars -->
+    <variable name="fileselector_linecolor" value="#22262C"/>
+    <variable name="fileselector_highlight_color" value="#171A1E"/>
+    <variable name="fileselector_highlight_font_color" value="#FF7A18"/>
+    <variable name="fileselector_separatorheight" value="1"/>
+    <variable name="fileselector_spacing" value="8"/>
+    <variable name="fastscroll_w" value="6"/>
+    <variable name="fastscroll_linew" value="2"/>
+    <variable name="fastscroll_rectw" value="6"/>
+    <variable name="fastscroll_recth" value="56"/>
+    <variable name="slidervalue_lineh" value="44"/>
+    <variable name="slidervalue_padding" value="8"/>
+    <variable name="slidervalue_sliderw" value="44"/>
+    <variable name="slidervalue_sliderh" value="44"/>
+    <variable name="input_line_width" value="1"/>
+
+    <!-- gabarit 540 x 960 (toutes les valeurs sont en px = dp) -->
+    <variable name="screen_width" value="540"/>
+    <variable name="screen_height" value="960"/>
+    <variable name="header_height" value="120"/>
+    <variable name="header_rule_y" value="119"/>
+    <variable name="navbar_height" value="76"/>
+    <variable name="navbar_y" value="884"/>
+    <variable name="indent" value="24"/>
+    <variable name="indent_right" value="516"/>
+    <variable name="content_width" value="492"/>
+    <variable name="center_x" value="270"/>
+    <variable name="col1_x_header" value="40"/>
+    <variable name="col2_x" value="282"/>
+    <variable name="col_center_half" value="153"/>
+
+    <!-- rangees : pas de 104 px = hauteur bouton 92 px + gouttiere 12 px -->
+    <variable name="row1_y" value="148"/>
+    <variable name="row2_y" value="252"/>
+    <variable name="row3_y" value="356"/>
+    <variable name="row4_y" value="460"/>
+    <variable name="row5_y" value="564"/>
+    <variable name="row6_y" value="668"/>
+    <variable name="row7_y" value="772"/>
+    <variable name="btn_h" value="92"/>
+
+    <!-- lignes de texte interieures -->
+    <variable name="text1_y" value="152"/>
+    <variable name="text2_y" value="196"/>
+    <variable name="text3_y" value="240"/>
+    <variable name="text4_y" value="284"/>
+    <variable name="text5_y" value="328"/>
+
+    <!-- bandeau : ligne d'etat / titre / sous-titre -->
+    <variable name="row1_header_y" value="10"/>
+    <variable name="row3_header_y" value="44"/>
+    <variable name="row4_header_y" value="82"/>
+
+    <!-- page sideload -->
+    <variable name="check1_y" value="240"/>
+    <variable name="check2_y" value="292"/>
+    <variable name="rule1_y" value="348"/>
+    <variable name="sl_console_y" value="360"/>
+    <variable name="sl_console_h" value="340"/>
+    <variable name="rule2_y" value="712"/>
+    <variable name="progress_y" value="736"/>
+    <variable name="action_btn_y" value="764"/>
+
+    <!-- pages a console (action_page, flash_zip, flash_done) -->
+    <variable name="console_y" value="200"/>
+    <variable name="console_h" value="500"/>
+
+    <!-- listes -->
+    <variable name="fileselector_y" value="148"/>
+    <variable name="fileselector_h" value="600"/>
+    <variable name="partitionlist_y" value="148"/>
+    <variable name="partitionlist_h" value="520"/>
+  </variables>
+
+  <!-- ============================== 4. STYLES ============================= -->
+  <styles>
+    <style name="text_l">
+      <font resource="font_l" color="%text_color%"/>
+    </style>
+    <style name="text_m">
+      <font resource="font_m" color="%text_color%"/>
+    </style>
+    <style name="text_s">
+      <font resource="font_s" color="%text_dim_color%"/>
+    </style>
+    <style name="text_status">
+      <font resource="font_s" color="%text_dim_color%"/>
+    </style>
+    <style name="text_m_accent">
+      <font resource="font_m" color="%accent_color%"/>
+    </style>
+    <style name="text_s_accent">
+      <font resource="font_s" color="%accent_soft_color%"/>
+    </style>
+    <style name="text_m_fail">
+      <font resource="font_m" color="%text_fail_color%"/>
+    </style>
+
+    <!-- boutons pleine largeur (492 x 92, rayon 16 px) -->
+    <style name="btn_full">
+      <highlight color="%highlight_color%"/>
+      <font resource="font_m" color="%button_text_color%"/>
+      <image resource="btn_full"/>
+    </style>
+    <style name="btn_primary_full">
+      <highlight color="%highlight_color%"/>
+      <font resource="font_m" color="%button_primary_text_color%"/>
+      <image resource="btn_full_primary"/>
+    </style>
+    <style name="btn_ghost_full">
+      <highlight color="%highlight_color%"/>
+      <font resource="font_m" color="%text_color%"/>
+      <image resource="btn_full_ghost"/>
+    </style>
+
+    <!-- boutons demi-largeur (234 x 92, rayon 16 px) -->
+    <style name="btn_half">
+      <highlight color="%highlight_color%"/>
+      <font resource="font_m" color="%button_text_color%"/>
+      <image resource="btn_half"/>
+    </style>
+    <style name="btn_primary_half">
+      <highlight color="%highlight_color%"/>
+      <font resource="font_m" color="%button_primary_text_color%"/>
+      <image resource="btn_half_primary"/>
+    </style>
+    <style name="btn_ghost_half">
+      <highlight color="%highlight_color%"/>
+      <font resource="font_m" color="%text_color%"/>
+      <image resource="btn_half_ghost"/>
+    </style>
+
+    <style name="checkbox">
+      <font resource="font_m" color="%text_color%"/>
+      <image checked="checkbox_true" unchecked="checkbox_false"/>
+    </style>
+
+    <!-- console : mono, fond noir pur, scrollbar accent -->
+    <style name="console">
+      <fastscroll rectcolor="%accent_color%" w="%fastscroll_w%" rectw="%fastscroll_rectw%" recth="%fastscroll_recth%"/>
+      <color foreground="%console_text_color%" background="%background_color%" scroll="%background_color%"/>
+      <font resource="fixed"/>
+    </style>
+
+    <style name="fileselector">
+      <highlight color="%fileselector_highlight_color%"/>
+      <header background="%header_color%" textcolor="%accent_color%" separatorcolor="%line_color%" separatorheight="%fileselector_separatorheight%"/>
+      <fastscroll linecolor="%fileselector_linecolor%" rectcolor="%accent_color%" w="%fastscroll_w%" linew="%fastscroll_linew%" rectw="%fastscroll_rectw%" recth="%fastscroll_recth%"/>
+      <separator color="%fileselector_linecolor%" height="%fileselector_separatorheight%"/>
+      <sort name="tw_gui_sort_order"/>
+      <icon folder="folder" file="file"/>
+      <background color="%background_color%"/>
+      <font resource="font_m" spacing="%fileselector_spacing%" color="%text_color%" highlightcolor="%accent_color%"/>
+    </style>
+
+    <style name="partitionlist">
+      <highlight color="%fileselector_highlight_color%"/>
+      <header background="%header_color%" textcolor="%accent_color%" separatorcolor="%line_color%" separatorheight="%fileselector_separatorheight%"/>
+      <fastscroll linecolor="%fileselector_linecolor%" rectcolor="%accent_color%" w="%fastscroll_w%" linew="%fastscroll_linew%" rectw="%fastscroll_rectw%" recth="%fastscroll_recth%"/>
+      <dimensions lineh="%slidervalue_lineh%" linepadding="%slidervalue_padding%" sliderw="%slidervalue_sliderw%" sliderh="%slidervalue_sliderh%"/>
+      <icon selected="checkbox_true" unselected="checkbox_false"/>
+      <separator color="%fileselector_linecolor%" height="%fileselector_separatorheight%"/>
+      <background color="%background_color%"/>
+      <font resource="font_m" spacing="%fileselector_spacing%" color="%text_color%" highlightcolor="%accent_color%"/>
+    </style>
+  </styles>
+
+  <!-- ============================ 5. TEMPLATES ============================ -->
+  <templates>
+
+    <!-- chrome de page : bandeau anthracite + barre de navigation typographique -->
+    <template name="page">
+      <background color="%background_color%"/>
+
+      <fill color="%header_color%">
+        <placement x="0" y="0" w="%screen_width%" h="%header_height%"/>
+      </fill>
+      <fill color="%line_color%">
+        <placement x="0" y="%header_rule_y%" w="%screen_width%" h="1"/>
+      </fill>
+
+      <text style="text_status">
+        <condition var1="tw_no_cpu_temp" var2="1"/>
+        <placement x="%indent%" y="%row1_header_y%"/>
+        <text>%tw_version%</text>
+      </text>
+      <text style="text_status">
+        <condition var1="tw_no_cpu_temp" var2="0"/>
+        <placement x="%indent%" y="%row1_header_y%"/>
+        <text>CPU %tw_cpu_temp%</text>
+      </text>
+      <text style="text_status">
+        <placement x="%center_x%" y="%row1_header_y%" placement="5"/>
+        <text>%tw_time%</text>
+      </text>
+      <text style="text_status">
+        <placement x="%indent_right%" y="%row1_header_y%" placement="1"/>
+        <text>BAT %tw_battery%</text>
+      </text>
+
+      <fill color="%header_color%">
+        <placement x="0" y="%navbar_y%" w="%screen_width%" h="%navbar_height%"/>
+      </fill>
+      <fill color="%line_color%">
+        <placement x="0" y="%navbar_y%" w="%screen_width%" h="1"/>
+      </fill>
+
+      <button>
+        <fill color="%transparent%"/>
+        <placement x="0" y="%navbar_y%" w="180" h="%navbar_height%"/>
+        <font resource="font_s" color="%text_dim_color%"/>
+        <text>{@fox_nav_back=RETOUR}</text>
+        <action function="key">back</action>
+      </button>
+      <button>
+        <fill color="%transparent%"/>
+        <placement x="180" y="%navbar_y%" w="180" h="%navbar_height%"/>
+        <font resource="font_s" color="%text_dim_color%"/>
+        <text>{@fox_nav_home=ACCUEIL}</text>
+        <action function="key">home</action>
+      </button>
+      <button>
+        <fill color="%transparent%"/>
+        <placement x="360" y="%navbar_y%" w="180" h="%navbar_height%"/>
+        <font resource="font_s" color="%text_dim_color%"/>
+        <text>{@fox_nav_screen=ÉCRAN}</text>
+        <action function="togglebacklight"/>
+      </button>
+
+      <action>
+        <touch key="power"/>
+        <action function="togglebacklight"/>
+      </action>
+      <action>
+        <touch key="power+voldown"/>
+        <action function="screenshot"/>
+      </action>
+    </template>
+
+    <!-- console des pages d'execution : deux filets, rien d'autre -->
+    <template name="console">
+      <fill color="%line_color%">
+        <placement x="%indent%" y="188" w="%content_width%" h="1"/>
+      </fill>
+      <console>
+        <placement x="%indent%" y="%console_y%" w="%content_width%" h="%console_h%"/>
+      </console>
+      <fill color="%line_color%">
+        <placement x="%indent%" y="%rule2_y%" w="%content_width%" h="1"/>
+      </fill>
+    </template>
+
+    <template name="progress_bar">
+      <progressbar>
+        <placement x="%indent%" y="%progress_y%"/>
+        <resource empty="progress_empty" full="progress_full"/>
+        <data name="ui_progress"/>
+      </progressbar>
+    </template>
+  </templates>
+
+  <!-- ============================== 6. PAGES ============================== -->
+  <pages>
+
+    <!-- ========== accueil : routage vers main2 ========== -->
+    <page name="main">
+      <action>
+        <actions>
+          <action function="set">tw_clear_destination=main2</action>
+          <action function="page">clear_vars</action>
+        </actions>
+      </action>
+    </page>
+
+    <page name="clear_vars">
+      <action>
+        <actions>
+          <action function="set">tw_operation_state=0</action>
+          <action function="set">tw_operation_status=0</action>
+          <action function="set">tw_text1=</action>
+          <action function="set">tw_text2=</action>
+          <action function="set">tw_action_text1=</action>
+          <action function="set">tw_action_text2=</action>
+          <action function="set">tw_action_param=</action>
+          <action function="set">tw_has_action2=0</action>
+          <action function="set">tw_action2=</action>
+          <action function="set">tw_action2_param=</action>
+          <action function="set">tw_has_cancel=0</action>
+          <action function="set">tw_cancel_action=</action>
+          <action function="set">tw_cancel_param=</action>
+          <action function="set">tw_show_exclamation=0</action>
+          <action function="set">tw_show_reboot=0</action>
+          <action function="set">tw_back=</action>
+          <action function="page">%tw_clear_destination%</action>
+        </actions>
+      </action>
+    </page>
+
+    <!-- ========== grille d'accueil : 6 tuiles 234 x 92 ========== -->
+    <page name="main2">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@fox_home_hdr=Team Win Recovery Project}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>%tw_version% · 540×960 · thème 3</text>
+      </text>
+
+      <button style="btn_primary_half">
+        <placement x="%indent%" y="%row1_y%"/>
+        <text>{@install_btn=Installer}</text>
+        <actions>
+          <action function="queueclear"/>
+          <action function="set">tw_selectimage=0</action>
+          <action function="page">install</action>
+        </actions>
+      </button>
+      <button style="btn_half">
+        <placement x="%col2_x%" y="%row1_y%"/>
+        <text>{@wipe_btn=Effacer}</text>
+        <action function="page">wipe</action>
+      </button>
+
+      <button style="btn_half">
+        <placement x="%indent%" y="%row3_y%"/>
+        <text>{@mount_btn=Monter}</text>
+        <action function="page">mount</action>
+      </button>
+      <button style="btn_half">
+        <placement x="%col2_x%" y="%row3_y%"/>
+        <text>{@fox_sideload_btn=Sideload}</text>
+        <action function="page">sideload</action>
+      </button>
+
+      <button style="btn_half">
+        <placement x="%indent%" y="%row5_y%"/>
+        <text>{@advanced_btn=Outils}</text>
+        <action function="page">advanced</action>
+      </button>
+      <button style="btn_ghost_half">
+        <placement x="%col2_x%" y="%row5_y%"/>
+        <text>{@reboot_btn=Reboot}</text>
+        <action function="page">reboot</action>
+      </button>
+
+      <text style="text_s">
+        <placement x="%indent%" y="716"/>
+        <text>Fox Ash · noir pur #000000 · rayon 16 dp</text>
+      </text>
+      <text style="text_s">
+        <placement x="%indent%" y="756"/>
+        <text>%tw_storage_display_name% — %tw_storage_free_size% MB libres</text>
+      </text>
+
+      <action>
+        <touch key="back"/>
+        <action function="key">home</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <!-- ========== installation de zip ========== -->
+    <page name="install">
+      <template name="page"/>
+
+      <text style="text_l">
+        <condition var1="tw_selectimage" var2="0"/>
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@install_zip_hdr=Installer un zip}</text>
+      </text>
+      <text style="text_l">
+        <condition var1="tw_selectimage" var2="1"/>
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@install_image_hdr=Installer une image}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>%tw_storage_display_name% — %tw_storage_free_size% MB libres</text>
+      </text>
+
+      <fileselector>
+        <placement x="%indent%" y="%fileselector_y%" w="%content_width%" h="%fileselector_h%"/>
+        <text>%tw_zip_location%</text>
+        <condition var1="tw_selectimage" var2="0"/>
+        <filter extn=".zip;.ozip;.ZIP;.OZIP" folders="1" files="1"/>
+        <path name="tw_zip_location" default="/sdcard"/>
+        <data name="tw_filename"/>
+        <selection name="tw_file"/>
+      </fileselector>
+
+      <fileselector>
+        <placement x="%indent%" y="%fileselector_y%" w="%content_width%" h="%fileselector_h%"/>
+        <text>%tw_zip_location%</text>
+        <condition var1="tw_selectimage" var2="1"/>
+        <filter extn=".img" folders="1" files="1"/>
+        <path name="tw_zip_location" default="/sdcard"/>
+        <data name="tw_filename"/>
+        <selection name="tw_file"/>
+      </fileselector>
+
+      <button style="btn_half">
+        <condition var1="tw_selectimage" var2="0"/>
+        <placement x="%indent%" y="%row7_y%"/>
+        <text>{@fox_install_image=Image .img}</text>
+        <actions>
+          <action function="set">tw_selectimage=1</action>
+          <action function="page">install</action>
+        </actions>
+      </button>
+      <button style="btn_half">
+        <condition var1="tw_selectimage" var2="1"/>
+        <placement x="%indent%" y="%row7_y%"/>
+        <text>{@fox_install_zip=Zip .zip}</text>
+        <actions>
+          <action function="set">tw_selectimage=0</action>
+          <action function="page">install</action>
+        </actions>
+      </button>
+      <button style="btn_ghost_half">
+        <placement x="%col2_x%" y="%row7_y%"/>
+        <text>{@fox_back=Retour}</text>
+        <action function="page">main</action>
+      </button>
+
+      <action>
+        <conditions>
+          <condition var1="tw_selectimage" var2="0"/>
+          <condition var1="tw_filename" op="modified"/>
+        </conditions>
+        <actions>
+          <action function="queuezip"/>
+          <action function="page">flash_confirm</action>
+        </actions>
+      </action>
+      <action>
+        <conditions>
+          <condition var1="tw_selectimage" var2="1"/>
+          <condition var1="tw_filename" op="modified"/>
+        </conditions>
+        <actions>
+          <action function="set">tw_is_slot_part=0</action>
+          <action function="page">flashimage_confirm</action>
+        </actions>
+      </action>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">main</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <!-- ========== confirmation de flash ========== -->
+    <page name="flash_confirm">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@install_zip_hdr=Installer un zip}</text>
+      </text>
+      <text style="text_m">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>%tw_file%</text>
+      </text>
+
+      <text style="text_s_accent">
+        <placement x="%indent%" y="%text1_y%"/>
+        <text>{@fox_zip_warn1=Cette opération peut installer un logiciel incompatible}</text>
+      </text>
+      <text style="text_s_accent">
+        <placement x="%indent%" y="%text2_y%"/>
+        <text>{@fox_zip_warn2=et rendre l'appareil inutilisable. Vérifiez le fichier.}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%indent%" y="%text4_y%"/>
+        <text>Répertoire : %tw_zip_location%</text>
+      </text>
+      <text style="text_s">
+        <placement x="%indent%" y="%text5_y%"/>
+        <text>File : %tw_zip_queue_count% zip(s) · max 10</text>
+      </text>
+
+      <button style="btn_half">
+        <placement x="%indent%" y="%row4_y%"/>
+        <text>{@fox_zip_add=Ajouter}</text>
+        <action function="page">install</action>
+      </button>
+      <button style="btn_half">
+        <placement x="%col2_x%" y="%row4_y%"/>
+        <text>{@fox_zip_clear=Vider la file}</text>
+        <actions>
+          <action function="queueclear"/>
+          <action function="page">install</action>
+        </actions>
+      </button>
+
+      <button style="btn_primary_full">
+        <placement x="%indent%" y="%row6_y%"/>
+        <text>{@fox_flash=Flasher maintenant}</text>
+        <action function="flash">flash_zip</action>
+      </button>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">install</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <page name="flashimage_confirm">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@install_image_hdr=Installer une image}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>%tw_file%</text>
+      </text>
+
+      <partitionlist>
+        <placement x="%indent%" y="%partitionlist_y%" w="%content_width%" h="%partitionlist_h%"/>
+        <icon selected="checkbox_true" unselected="checkbox_false"/>
+        <text>{@fox_flash_image_select=Partition cible :}</text>
+        <data name="tw_flash_partition"/>
+        <listtype name="flashimg"/>
+      </partitionlist>
+
+      <button style="btn_primary_full">
+        <placement x="%indent%" y="%action_btn_y%"/>
+        <text>{@fox_flash_image=Flasher l'image}</text>
+        <actions>
+          <action function="set">tw_back=flashimage_confirm</action>
+          <action function="set">tw_action=flashimage</action>
+          <action function="set">tw_has_action2=0</action>
+          <action function="set">tw_action_text1={@flashing_image=Flash de l'image...}</action>
+          <action function="set">tw_action_text2=</action>
+          <action function="set">tw_complete_text1={@image_flashed=Image flashée}</action>
+          <action function="page">action_page</action>
+        </actions>
+      </button>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">install</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <!-- ========== execution du flash : console + progression ========== -->
+    <page name="flash_zip">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@install_zip_count_hdr=Zip %tw_zip_index% / %tw_zip_queue_count%}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>%tw_file%</text>
+      </text>
+
+      <template name="console"/>
+      <template name="progress_bar"/>
+
+      <action>
+        <condition var1="tw_operation_state" var2="1"/>
+        <action function="page">flash_done</action>
+      </action>
+    </page>
+
+    <page name="flash_done">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@install_zip_hdr=Installer un zip}</text>
+      </text>
+      <text style="text_m_fail">
+        <condition var1="tw_operation_status" op="!=" var2="0"/>
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>{@failed=Échec}</text>
+      </text>
+      <text style="text_m">
+        <condition var1="tw_operation_status" var2="0"/>
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>{@successful=Terminé}</text>
+      </text>
+
+      <template name="console"/>
+
+      <button style="btn_primary_full">
+        <placement x="%indent%" y="%action_btn_y%"/>
+        <text>{@reboot_system_btn=Redémarrer le système}</text>
+        <action function="reboot">system</action>
+      </button>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">main</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <!-- ========== effacement ========== -->
+    <page name="wipe">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@wipe_hdr=Effacer}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>{@fox_wipe_sub=Dalvik · Cache · Data}</text>
+      </text>
+
+      <text style="text_s">
+        <placement x="%indent%" y="%text1_y%"/>
+        <text>{@fox_wipe_note1=Factory Reset efface Dalvik, Cache et Data sans toucher à}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%indent%" y="%text2_y%"/>
+        <text>{@fox_wipe_note2=/sdcard ni aux sauvegardes. Une confirmation suit.}</text>
+      </text>
+
+      <button style="btn_primary_full">
+        <placement x="%indent%" y="%row4_y%"/>
+        <text>{@factory_reset_btn=Factory Reset}</text>
+        <actions>
+          <action function="set">tw_back=wipe</action>
+          <action function="set">tw_action=wipe</action>
+          <action function="set">tw_action_param=data</action>
+          <action function="set">tw_action_text1={@factory_resetting=Factory Reset...}</action>
+          <action function="set">tw_action_text2={@fox_factory_reset_desc=Dalvik + Cache + Data}</action>
+          <action function="set">tw_complete_text1={@factory_reset_complete=Factory Reset terminé}</action>
+          <action function="page">action_page</action>
+        </actions>
+      </button>
+
+      <button style="btn_full">
+        <placement x="%indent%" y="%row5_y%"/>
+        <text>{@wipe_cache_dalvik_btn=Cache / Dalvik}</text>
+        <actions>
+          <action function="set">tw_back=wipe</action>
+          <action function="set">tw_action=wipe</action>
+          <action function="set">tw_action_param=/cache</action>
+          <action function="set">tw_has_action2=1</action>
+          <action function="set">tw_action2=wipe</action>
+          <action function="set">tw_action2_param=dalvik</action>
+          <action function="set">tw_action_text1={@wiping_cache_dalvik=Effacement du cache...}</action>
+          <action function="set">tw_action_text2={@fox_wipe_cache_desc=Cache + Dalvik}</action>
+          <action function="set">tw_complete_text1={@wipe_cache_dalvik_complete=Cache effacé}</action>
+          <action function="page">action_page</action>
+        </actions>
+      </button>
+
+      <button style="btn_ghost_full">
+        <placement x="%indent%" y="%row6_y%"/>
+        <text>{@fox_back=Retour}</text>
+        <action function="page">main</action>
+      </button>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">main</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <!-- ========== montage des partitions ========== -->
+    <page name="mount">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@mount_hdr=Monter}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>%tw_storage_display_name% — %tw_storage_free_size% MB libres</text>
+      </text>
+
+      <partitionlist>
+        <placement x="%indent%" y="%partitionlist_y%" w="%content_width%" h="%partitionlist_h%"/>
+        <text>{@mount_sel_part=Sélectionner les partitions à monter :}</text>
+        <listtype name="mount"/>
+      </partitionlist>
+
+      <button style="btn_primary_full">
+        <conditions>
+          <condition var1="tw_has_mtp" var2="1"/>
+          <condition var1="tw_mtp_enabled" var2="0"/>
+        </conditions>
+        <placement x="%indent%" y="%row6_y%"/>
+        <text>{@enable_mtp_btn=Activer MTP}</text>
+        <action function="startmtp"/>
+      </button>
+      <button style="btn_ghost_full">
+        <conditions>
+          <condition var1="tw_has_mtp" var2="1"/>
+          <condition var1="tw_mtp_enabled" var2="1"/>
+        </conditions>
+        <placement x="%indent%" y="%row6_y%"/>
+        <text>{@disable_mtp_btn=Désactiver MTP}</text>
+        <action function="stopmtp"/>
+      </button>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">main</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <!-- ========== redemarrage ========== -->
+    <page name="reboot">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@reboot_hdr=Reboot}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%indent%" y="%text1_y%"/>
+        <text>{@fox_reboot_note=Choisissez la destination de redémarrage.}</text>
+      </text>
+
+      <button style="btn_primary_half">
+        <placement x="%indent%" y="%row3_y%"/>
+        <text>{@reboot_system_btn=Systeme}</text>
+        <action function="reboot">system</action>
+      </button>
+      <button style="btn_half">
+        <placement x="%col2_x%" y="%row3_y%"/>
+        <text>{@reboot_recovery_btn=Recovery}</text>
+        <action function="reboot">recovery</action>
+      </button>
+      <button style="btn_half">
+        <placement x="%indent%" y="%row4_y%"/>
+        <text>{@reboot_bootloader_btn=Bootloader}</text>
+        <action function="reboot">bootloader</action>
+      </button>
+      <button style="btn_ghost_half">
+        <placement x="%col2_x%" y="%row4_y%"/>
+        <text>{@fox_poweroff=Éteindre}</text>
+        <action function="reboot">poweroff</action>
+      </button>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">main</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <!-- ========== outils ========== -->
+    <page name="advanced">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@advanced_hdr=Outils}</text>
+      </text>
+      <text style="text_s">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>{@fox_advanced_sub=Journal, thème, capture}</text>
+      </text>
+
+      <button style="btn_primary_full">
+        <placement x="%indent%" y="%row2_y%"/>
+        <text>{@adb_sideload_btn=ADB Sideload}</text>
+        <action function="page">sideload</action>
+      </button>
+
+      <button style="btn_half">
+        <placement x="%indent%" y="%row3_y%"/>
+        <text>{@reload_theme_btn=Recharger le thème}</text>
+        <action function="reload"/>
+      </button>
+      <button style="btn_half">
+        <placement x="%col2_x%" y="%row3_y%"/>
+        <text>{@fox_screenshot=Capture}</text>
+        <action function="screenshot"/>
+      </button>
+
+      <button style="btn_half">
+        <placement x="%indent%" y="%row4_y%"/>
+        <text>{@copy_log_btn=Copier le journal}</text>
+        <action function="copylog"/>
+      </button>
+      <button style="btn_ghost_half">
+        <placement x="%col2_x%" y="%row4_y%"/>
+        <text>{@fox_screen_off=Ecran</text>
+        <action function="togglebacklight"/>
+      </button>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">main</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <!-- ================= PAGE SIGNATUREE : SIDELOAD ================= -->
+    <!-- Titre, usage, etat, deux options, console mono, barre, boutons.  -->
+    <page name="sideload">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>{@advanced_hdr=Outils}</text>
+      </text>
+      <text style="text_m_accent">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>{@adb_sideload_hdr=ADB Sideload}</text>
+      </text>
+
+      <text style="text_s">
+        <placement x="%indent%" y="%text1_y%"/>
+        <text>{@fox_sideload_usage=Depuis le PC : adb sideload nom-du-fichier.zip}</text>
+      </text>
+
+      <!-- etats mutuellement exclusifs sur la meme ligne -->
+      <text style="text_s">
+        <conditions>
+          <condition var1="tw_action_busy" var2="0"/>
+          <condition var1="tw_operation_state" var2="0"/>
+        </conditions>
+        <placement x="%indent%" y="%text2_y%"/>
+        <text>{@fox_sideload_idle=En attente de la connexion adb...}</text>
+      </text>
+      <text style="text_m_accent">
+        <condition var1="tw_action_busy" var2="1"/>
+        <placement x="%indent%" y="%text2_y%"/>
+        <text>{@fox_sideload_running=Transfert en cours — ne débranchez rien}</text>
+      </text>
+      <text style="text_m">
+        <conditions>
+          <condition var1="tw_operation_state" var2="1"/>
+          <condition var1="tw_operation_status" var2="0"/>
+        </conditions>
+        <placement x="%indent%" y="%text2_y%"/>
+        <text>{@fox_sideload_done=Sideload terminé}</text>
+      </text>
+      <text style="text_m_fail">
+        <conditions>
+          <condition var1="tw_operation_state" var2="1"/>
+          <condition var1="tw_operation_status" op="!=" var2="0"/>
+        </conditions>
+        <placement x="%indent%" y="%text2_y%"/>
+        <text>{@fox_sideload_failed=Échec du sideload — voir le journal}</text>
+      </text>
+
+      <checkbox>
+        <placement x="%indent%" y="%check1_y%"/>
+        <text>{@sideload_wipe_dalvik_chk=Effacer le cache Dalvik}</text>
+        <data variable="tw_wipe_dalvik"/>
+      </checkbox>
+      <checkbox>
+        <placement x="%indent%" y="%check2_y%"/>
+        <text>{@sideload_wipe_cache_chk=Effacer le cache}</text>
+        <data variable="tw_wipe_cache"/>
+      </checkbox>
+
+      <fill color="%line_color%">
+        <placement x="%indent%" y="%rule1_y%" w="%content_width%" h="1"/>
+      </fill>
+
+      <console>
+        <placement x="%indent%" y="%sl_console_y%" w="%content_width%" h="%sl_console_h%"/>
+      </console>
+
+      <fill color="%line_color%">
+        <placement x="%indent%" y="%rule2_y%" w="%content_width%" h="1"/>
+      </fill>
+
+      <progressbar>
+        <placement x="%indent%" y="%progress_y%"/>
+        <resource empty="progress_empty" full="progress_full"/>
+        <data name="ui_progress"/>
+      </progressbar>
+
+      <button style="btn_ghost_half">
+        <placement x="%indent%" y="%action_btn_y%"/>
+        <text>{@fox_back=Retour}</text>
+        <action function="page">advanced</action>
+      </button>
+
+      <button style="btn_primary_half">
+        <condition var1="tw_action_busy" var2="0"/>
+        <placement x="%col2_x%" y="%action_btn_y%"/>
+        <text>{@fox_start_sideload=Démarrer}</text>
+        <actions>
+          <action function="adbsideload"/>
+        </actions>
+      </button>
+
+      <button style="btn_ghost_half">
+        <condition var1="tw_action_busy" var2="1"/>
+        <placement x="%col2_x%" y="%action_btn_y%"/>
+        <text>{@fox_cancel_sideload=Annuler}</text>
+        <action function="adbsideloadcancel"/>
+      </button>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">advanced</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+    <!-- ========== moteur d'action partage (wipe, flash, sideload...) ========== -->
+    <page name="action_page">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>%tw_action_text1%</text>
+      </text>
+      <text style="text_s">
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>%tw_action_text2%</text>
+      </text>
+
+      <template name="console"/>
+      <template name="progress_bar"/>
+
+      <button style="btn_ghost_half">
+        <condition var1="tw_has_cancel" var2="1"/>
+        <placement x="%col_center_half%" y="%action_btn_y%"/>
+        <text>{@fox_cancel=Annuler}</text>
+        <action function="%tw_cancel_action%">%tw_cancel_param%</action>
+      </button>
+
+      <action>
+        <condition var1="tw_operation_state" var2="1"/>
+        <action function="page">action_complete</action>
+      </action>
+      <action>
+        <condition var1="tw_has_action2" var2="0"/>
+        <actions>
+          <action function="%tw_action%">%tw_action_param%</action>
+        </actions>
+      </action>
+      <action>
+        <condition var1="tw_has_action2" var2="1"/>
+        <actions>
+          <action function="%tw_action%">%tw_action_param%</action>
+          <action function="%tw_action2%">%tw_action2_param%</action>
+        </actions>
+      </action>
+    </page>
+
+    <page name="action_complete">
+      <template name="page"/>
+
+      <text style="text_l">
+        <placement x="%col1_x_header%" y="%row3_header_y%"/>
+        <text>%tw_complete_text1%</text>
+      </text>
+      <text style="text_m_fail">
+        <condition var1="tw_operation_status" op="!=" var2="0"/>
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>{@failed=Échec}</text>
+      </text>
+      <text style="text_m">
+        <condition var1="tw_operation_status" var2="0"/>
+        <placement x="%col1_x_header%" y="%row4_header_y%"/>
+        <text>{@successful=Terminé}</text>
+      </text>
+
+      <template name="console"/>
+
+      <button style="btn_primary_full">
+        <condition var1="tw_show_reboot" var2="1"/>
+        <placement x="%indent%" y="%action_btn_y%"/>
+        <text>{@reboot_system_btn=Redémarrer le système}</text>
+        <action function="reboot">system</action>
+      </button>
+      <button style="btn_ghost_full">
+        <condition var1="tw_show_reboot" var2="0"/>
+        <placement x="%indent%" y="%action_btn_y%"/>
+        <text>{@fox_home=Accueil}</text>
+        <action function="page">main</action>
+      </button>
+
+      <action>
+        <touch key="back"/>
+        <action function="page">main</action>
+      </action>
+      <action>
+        <touch key="home"/>
+        <action function="page">main</action>
+      </action>
+    </page>
+
+  </pages>
+</recovery>
+`;
+
+/** Génération des PNG d'angles arrondis (rayon 16 px) — section « Assets ». */
+export const ASSET_SCRIPT = `# python3 -m pip install pillow
+from PIL import Image, ImageDraw
+
+ACCENT  = (255, 122, 24, 255)   # #FF7A18 — même valeur que accent_color
+CARD    = (23, 26, 30, 255)     # #171A1E
+RULE    = (34, 38, 44, 255)     # #22262C
+INK     = (230, 232, 235, 255)  # #E6E8EB
+DARK    = (11, 12, 14, 255)     # #0B0C0E
+R = 16                          # rayon 16 dp = 16 px en mdpi (540x960)
+
+def plate(name, w, h, radius, fill, outline=None, width=2):
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle([0, 0, w - 1, h - 1], radius=radius,
+                        fill=fill, outline=outline, width=width)
+    im.save("images/" + name + ".png")
+
+# boutons demi-largeur (2 colonnes)
+plate("btn_half",         234, 92, R, CARD, RULE)
+plate("btn_half_primary", 234, 92, R, ACCENT)
+plate("btn_half_ghost",   234, 92, R, None, RULE)
+# boutons pleine largeur
+plate("btn_full",         492, 92, R, CARD, RULE)
+plate("btn_full_primary", 492, 92, R, ACCENT)
+plate("btn_full_ghost",   492, 92, R, None, RULE)
+# barre de progression + cases a cocher
+plate("progress_empty",   492,  8, 4, RULE)
+plate("progress_fill",    492,  8, 4, ACCENT)
+plate("checkbox_false",    36, 36, 10, None, (58, 64, 72, 255))
+plate("checkbox_true",     36, 36, 10, ACCENT)
+
+# icônes dossier / fichier du selecteur de fichiers
+def folder(name):
+    im = Image.new("RGBA", (36, 36), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle([2, 10, 34, 33], radius=4, fill=ACCENT)
+    d.rounded_rectangle([2, 5, 18, 14], radius=4, fill=ACCENT)
+    im.save("images/" + name + ".png")
+
+def fileicon(name):
+    im = Image.new("RGBA", (36, 36), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle([7, 3, 29, 33], radius=4, outline=INK, width=2)
+    d.line([12, 12, 24, 12], fill=INK, width=2)
+    d.line([12, 18, 24, 18], fill=INK, width=2)
+    d.line([12, 24, 20, 24], fill=INK, width=2)
+    im.save("images/" + name + ".png")
+
+folder("folder"); fileicon("file")
+print("12 PNG écrits dans images/")
+`;
+
+export const ZIP_TREE = `ui.zip
+├── ui.xml                 ← le fichier ci-dessus (racine du zip)
+├── images/
+│   ├── btn_half.png            234 × 92   rayon 16
+│   ├── btn_half_primary.png    234 × 92   rayon 16
+│   ├── btn_half_ghost.png      234 × 92   rayon 16
+│   ├── btn_full.png            492 × 92   rayon 16
+│   ├── btn_full_primary.png    492 × 92   rayon 16
+│   ├── btn_full_ghost.png      492 × 92   rayon 16
+│   ├── progress_empty.png      492 × 8    rayon 4
+│   ├── progress_fill.png       492 × 8    rayon 4
+│   ├── checkbox_false.png       36 × 36   rayon 10
+│   ├── checkbox_true.png        36 × 36   rayon 10
+│   ├── folder.png               36 × 36
+│   └── file.png                 36 × 36
+└── fonts/                 ← vide : RobotoCondensed + DroidSansMono viennent
+                              de twres/fonts du build TWRP
+`;
