@@ -9,7 +9,7 @@ on:
         default: "eng"
 
 env:
-  MANIFEST_URL: https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git
+  MANIFEST_URL: https://github.com
   MANIFEST_BRANCH: twrp-6.0
   DEVICE_VENDOR: samsung
   DEVICE_CODENAME: grandprimevelte
@@ -19,91 +19,71 @@ env:
 jobs:
   build:
     name: Compiler recovery.img
-    runs-on: ubuntu-latest
-    container:
-      image: ubuntu:18.04
-      options: --privileged
+    runs-on: ubuntu-20.04
     timeout-minutes: 360
 
     steps:
-      - name: Installer les outils de build Android (Omni 6.0 / Java 8 / Python 2)
-        run: |
-          export DEBIAN_FRONTEND=noninteractive
-          apt-get update -y
-          apt-get install -y --no-install-recommends \
-            bc bison build-essential ca-certificates ccache curl flex g++-multilib gcc-multilib \
-            git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool \
-            libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop \
-            m4 make openjdk-8-jdk pngcrush python python3 rsync schedtool squashfs-tools \
-            sudo unzip wget xsltproc zip zlib1g-dev
-          update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
-          update-alternatives --set javac /usr/lib/jvm/java-8-openjdk-amd64/bin/javac
-          java -version
-          python --version
-
-      - name: Installer l'outil repo
-        run: |
-          mkdir -p /usr/local/bin
-          curl -fsSL https://storage.googleapis.com/git-repo-downloads/repo-1 -o /usr/local/bin/repo
-          chmod a+x /usr/local/bin/repo
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git config --global color.ui false
-
       - name: Récupérer le dépôt (contient device/samsung/grandprimevelte)
         uses: actions/checkout@v4
         with:
           path: local_repo
 
-      - name: Vérifier la présence du device tree local
-        run: |
-          if [ ! -d "local_repo/${DEVICE_PATH}" ]; then
-            echo "::error::Le dossier ${DEVICE_PATH} est introuvable dans ce dépôt."
-            exit 1
-          fi
-          ls -la "local_repo/${DEVICE_PATH}"
-
-      - name: Initialiser et synchroniser les sources TWRP 3.2 (OmniROM 6.0)
-        run: |
-          mkdir -p omni
-          cd omni
-          repo init --depth=1 -u ${MANIFEST_URL} -b ${MANIFEST_BRANCH}
-          repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
-          ls -la
-
-      - name: Associer le device tree local aux sources
-        run: |
-          mkdir -p omni/${DEVICE_PATH}
-          cp -r local_repo/${DEVICE_PATH}/. omni/${DEVICE_PATH}/
-          echo "Contenu de omni/${DEVICE_PATH} :"
-          ls -la omni/${DEVICE_PATH}
-
-      - name: Configurer ccache
-        run: |
-          mkdir -p /root/.ccache
-          echo "USE_CCACHE=1" >> $GITHUB_ENV
-          echo "CCACHE_DIR=/root/.ccache" >> $GITHUB_ENV
-          omni/prebuilts/misc/linux-x86/ccache/ccache -M 10G || true
-
-      - name: Compiler recovery.img
-        shell: bash
-        run: |
-          cd omni
-          export LC_ALL=C
-          export ALLOW_MISSING_DEPENDENCIES=true
-          export USE_CCACHE=1
-          export CCACHE_DIR=/root/.ccache
-          source build/envsetup.sh
-          lunch omni_${DEVICE_CODENAME}-${{ github.event.inputs.build_type }}
-          make clean
-          make -j$(nproc --all) ${TARGET_IMAGE} 2>&1 | tee build.log
-          OUT_DIR=out/target/product/${DEVICE_CODENAME}
-          if [ ! -f "${OUT_DIR}/recovery.img" ]; then
-            echo "::error::recovery.img n'a pas été généré. Consultez build.log."
-            exit 1
-          fi
-          ls -lh ${OUT_DIR}/recovery.img
-          md5sum ${OUT_DIR}/recovery.img | tee ${OUT_DIR}/recovery.img.md5
+      - name: Exécuter la compilation dans le conteneur d'époque
+        uses: docker://ubuntu:18.04
+        with:
+          args: |
+            bash -c "
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -y
+            apt-get install -y --no-install-recommends \
+              bc bison build-essential ca-certificates ccache curl flex g++-multilib gcc-multilib \
+              git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool \
+              libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop \
+              m4 make openjdk-8-jdk pngcrush python python3 rsync schedtool squashfs-tools \
+              sudo unzip wget xsltproc zip zlib1g-dev
+            
+            update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+            update-alternatives --set javac /usr/lib/jvm/java-8-openjdk-amd64/bin/javac
+            
+            mkdir -p /usr/local/bin
+            curl -fsSL https://googleapis.com -o /usr/local/bin/repo
+            chmod a+x /usr/local/bin/repo
+            
+            git config --global user.name 'GitHub Actions'
+            git config --global user.email 'actions@github.com'
+            git config --global color.ui false
+            
+            echo 'Vérification de l'emplacement du Device Tree...'
+            if [ -d 'local_repo/${{ env.DEVICE_PATH }}' ]; then
+              echo 'Device tree trouvé dans la racine du dépôt.'
+              export ACTUAL_TREE_PATH='local_repo/${{ env.DEVICE_PATH }}'
+            elif [ -d 'local_repo/g531F/${{ env.DEVICE_PATH }}' ]; then
+              echo 'Device tree trouvé à l'intérieur du sous-dossier g531F.'
+              export ACTUAL_TREE_PATH='local_repo/g531F/${{ env.DEVICE_PATH }}'
+            elif [ -d 'local_repo/g531f/${{ env.DEVICE_PATH }}' ]; then
+              echo 'Device tree trouvé à l'intérieur du sous-dossier g531f.'
+              export ACTUAL_TREE_PATH='local_repo/g531f/${{ env.DEVICE_PATH }}'
+            else
+              echo '::error::Le dossier ${{ env.DEVICE_PATH }} est introuvable sur votre dépôt GitHub.'
+              exit 1
+            fi
+            
+            mkdir -p omni
+            cd omni
+            repo init --depth=1 -u ${{ env.MANIFEST_URL }} -b ${{ env.MANIFEST_BRANCH }}
+            repo sync -c -j\$(nproc --all) --force-sync --no-clone-bundle --no-tags
+            
+            mkdir -p ${{ env.DEVICE_PATH }}
+            cp -r ../\$ACTUAL_TREE_PATH/. ${{ env.DEVICE_PATH }}/
+            
+            export LC_ALL=C
+            export ALLOW_MISSING_DEPENDENCIES=true
+            
+            source build/envsetup.sh
+            lunch omni_${{ env.DEVICE_CODENAME }}-${{ github.event.inputs.build_type }}
+            make clean
+            make -j\$(nproc --all) ${{ env.TARGET_IMAGE }} 2>&1 | tee build.log
+            "
 
       - name: Publier l'image recovery.img
         if: success()
@@ -113,7 +93,6 @@ jobs:
           path: |
             omni/out/target/product/${{ env.DEVICE_CODENAME }}/recovery.img
             omni/out/target/product/${{ env.DEVICE_CODENAME }}/recovery.img.md5
-          if-no-files-found: error
 
       - name: Publier le journal de compilation (en cas d'échec)
         if: failure()
